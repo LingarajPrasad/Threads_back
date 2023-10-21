@@ -61,8 +61,8 @@ const deletePost = async (req, res) => {
         if (post.postedBy.toString() !== req.user._id.toString())
             return res.status(401).json({ message: "Unauthorized action" })
 
-        if(post.image){
-            const imgId=post.image.split("/").pop().split(".")[0]
+        if (post.image) {
+            const imgId = post.image.split("/").pop().split(".")[0]
             await cloudinary.uploader.destroy(imgId)
         }
         await Post.findByIdAndDelete(req.params.id)
@@ -134,6 +134,8 @@ const feed = async (req, res) => {
         }
         const following = user.following
         const feedPosts = await Post.find({ postedBy: { $in: following } }).sort({ createdAt: -1 })
+        // const feedPostsself = await Post.find({ postedBy: user._id }).sort({ createdAt: -1 })
+        // console.log(typeof(feedPosts))
 
         res.status(200).json(feedPosts)
 
@@ -160,4 +162,4 @@ const getUserPost = async (req, res) => {
 }
 
 
-export { createPost, feed, getPost, likeUnlikePost, replyToPost, deletePost,getUserPost }
+export { createPost, feed, getPost, likeUnlikePost, replyToPost, deletePost, getUserPost }
