@@ -13,7 +13,7 @@ async function sendMessage(req, res) {
         if (!conversation) {
             conversation = new Conversation({
                 participants: [senderId, recipientId],
-                lastMesssage: {
+                lastMessage: {
                     text: message,
                     sender: senderId,
                 }
@@ -28,7 +28,7 @@ async function sendMessage(req, res) {
         await Promise.all([
             newMessage.save(),
             conversation.updateOne({
-                lastMesssage: {
+                lastMessage: {
                     text: message,
                     sender: senderId
                 }
@@ -72,6 +72,15 @@ async function getConversations(req, res) {
             path: 'participants',
             select: "username profilePic"
         })
+
+        conversation.forEach(conversation=>{
+            conversation.participants=conversation.participants.filter(
+
+                participants=>participants._id.toString() !==userId.toString()
+            )
+        })
+
+
         res.status(200).json(conversation)
     } catch (error) {
         res.status(500).json({ error: error.message })
